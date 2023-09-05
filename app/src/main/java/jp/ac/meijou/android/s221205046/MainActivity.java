@@ -12,14 +12,21 @@ import jp.ac.meijou.android.s221205046.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private PrefDataStore prefDataStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        prefDataStore = PrefDataStore.getInstance(this);
 
-        binding.showText.setText(R.string.showText);
+        binding.saveButton.setOnClickListener(view ->{
+            var text = binding.editTextText.getText().toString();
+            prefDataStore.setString("name", text);
+        });
+
+        //binding.showText.setText(R.string.showText);
 
         binding.button.setOnClickListener(view -> {
             float newSize = 24;
@@ -51,5 +58,12 @@ public class MainActivity extends AppCompatActivity {
                 binding.showText.setText(editable.toString());
             }
         });
+    }
+    @Override
+    protected void onStart(){
+        super.onStart();
+        prefDataStore.getString("name")
+                .ifPresent(name -> binding.showText.setText(name));
+
     }
 }
